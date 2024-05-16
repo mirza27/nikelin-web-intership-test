@@ -11,4 +11,69 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl         = env("DIRECT_URL")
+}
+
+model Admin {
+  id        Int       @id @default(autoincrement())
+  email     String   @unique
+  password  String  
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  role      Position
+  name      String
+  email     String
+  department String?
+
+  bookings  Booking[] @relation("UserBookings")
+  approvals Approval[]
+
+  @@map("users")
+}
+
+model Approval {
+  id            Int           @id @default(autoincrement())
+  bookingId     Int
+  approverId    Int
+  level         Int
+  status        ApprovalStatus @default(PENDING)
+  approvalDate  DateTime?
+  comments      String?
+
+  booking       Booking        @relation(fields: [bookingId], references: [id])
+  approver      User           @relation(fields: [approverId], references: [id])
+
+  @@map("approvals")
+}
+
+enum Position {
+  MANAGER
+  SUPERVISOR
+  EMPLOYEE
+}
+
+enum VehicleType {
+  PASSENGER
+  CARGO
+}
+
+enum OwnershipType {
+  COMPANY
+  RENTAL
+}
+
+enum BookingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
