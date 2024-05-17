@@ -41,22 +41,23 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
 
 
         // update booking status
-        const approvals = await prisma.approval.findMany({
+        const approvals: Approval[] = await prisma.approval.findMany({
             where: {
                 bookingId: updatedApproval.bookingId
             }
         });
 
         // cek setiap approval status
-        const allApproved = approvals.every((a: any) => a.status === ApprovalStatus.APPROVED);
-        const allRejected = approvals.every((a: any) => a.status === ApprovalStatus.REJECTED);
+        const allApproved = approvals.every((a: any) => a.status === "APPROVED");
+        const allRejected = approvals.every((a: any) => a.status === "REJECTED");
 
-        let newBookingStatus: BookingStatus | null = null;
+        // let newBookingStatus: BookingStatus | null = null;
+        let newBookingStatus: string | null = null;
 
         if (allApproved) {
-            newBookingStatus = BookingStatus.APPROVED;
+            newBookingStatus = "APPROVED";
         } else if (allRejected) {
-            newBookingStatus = BookingStatus.REJECTED;
+            newBookingStatus = "REJECTED";
         }
 
         // update status booking

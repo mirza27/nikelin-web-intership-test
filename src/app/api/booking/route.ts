@@ -3,9 +3,9 @@ import prisma from "../../../../prisma";
 
 
 // get all booking for admins
-export function GET(request: Request) {
+export async function GET(request: Request) {
     try {
-        const bookings: Booking[] = prisma.booking.findMany({
+        const bookings: Booking[] = await prisma.booking.findMany({
             include: {
                 vehicle: true,
                 approver: false,
@@ -40,19 +40,41 @@ export function GET(request: Request) {
 // add new booking by admin
 export async function POST(request: Request) {
     const { bookingName, description, vehicleId, purpose, approverId, driverId, userId, startDate, endDate, } = await request.json();
+    
+    const formattedStartDate = new Date(startDate).toISOString();
+    const formattedEndDate = new Date(endDate).toISOString();
 
     try {
-        const newBooking = await prisma.booking.create({
+        const newBooking: Booking = await prisma.booking.create({
             data: {
                 bookingName: bookingName,
                 description: description,
-                vehicleId: vehicleId,
+                vehicle: {
+                    connect: {
+                        id: parseInt(vehicleId)
+                    }
+                },
                 purpose: purpose,
-                approverId: approverId, // user dengan role supervisor
-                driverId: driverId, // user dengan role employee sebagai pengemudi
-                userId: userId, // user dengan role employee sebagai pengaju
-                startDate,
-                endDate
+                approver: { // user dengan role supervisor
+                    connect: {
+                        id: parseInt(approverId)
+                    }
+                },
+                driver: { // user dengan role employee sebagai pengemudi
+                    connect: {
+                        id: parseInt(driverId)
+                    }
+                },
+                user: { // user dengan role employee sebagai pengaju
+                    connect: {
+                        id: parseInt(userId)
+                    }
+                },
+                // approverId: approverId, 
+                // driverId: driverId, 
+                // userId: userId, 
+                startDate : formattedStartDate,
+                endDate : formattedEndDate,
             }
         })
 

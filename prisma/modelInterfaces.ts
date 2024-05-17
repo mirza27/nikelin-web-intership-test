@@ -86,6 +86,7 @@ interface Admin {
     createdAt: Date;
     vehicle?: Vehicle;
   }
+  
   interface ActivityLog {
     id: number;
     userId: number;
