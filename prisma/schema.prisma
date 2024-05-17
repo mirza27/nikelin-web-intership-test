@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,7 +5,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  directUrl   = env("DIRECT_URL")
+  //directUrl   = env("DIRECT_URL")
 }
 
 model Admin {
@@ -21,16 +15,18 @@ model Admin {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  role      Position
-  name      String
-  email     String
+  id         Int          @id @default(autoincrement())
+  email      String       @unique
+  password   String
+  role       Position
+  name       String
   department String?
 
-  bookings  Booking[] @relation("UserBookings")
-  approvals Approval[]
+  bookings   Booking[]    @relation("UserBookings")
+  approvals  Approval[]
+  driverBookings Booking[] @relation("DriverBookings")
+  approverBookings Booking[] @relation("ApproverBookings")
+  activities ActivityLog[]
 
   @@map("users")
 }
@@ -41,13 +37,94 @@ model Approval {
   approverId    Int
   level         Int
   status        ApprovalStatus @default(PENDING)
-  approvalDate  DateTime?
   comments      String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 
   booking       Booking        @relation(fields: [bookingId], references: [id])
   approver      User           @relation(fields: [approverId], references: [id])
 
   @@map("approvals")
+}
+
+model Vehicle {
+  id               Int               @id @default(autoincrement())
+  type             VehicleType
+  model            String
+  licensePlate     String            @unique
+  ownedBy          OwnershipType
+  fuelConsumption  Float?
+  lastServiceDate  DateTime?
+
+  bookings         Booking[]
+  fuelConsumptions FuelConsumption[]
+  serviceHistories ServiceHistory[]
+
+  @@map("vehicles")
+}
+
+model Booking {
+  id          Int          @id @default(autoincrement())
+  bookingName String
+  description String
+  userId      Int
+  vehicleId   Int
+  driverId    Int
+  approverId  Int
+  startDate   DateTime
+  endDate     DateTime
+  status      BookingStatus @default(PENDING)
+  purpose     String
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  user        User          @relation("UserBookings", fields: [userId], references: [id])
+  vehicle     Vehicle       @relation(fields: [vehicleId], references: [id])
+  driver      User          @relation("DriverBookings", fields: [driverId], references: [id])
+  approver    User          @relation("ApproverBookings", fields: [approverId], references: [id])
+  approvals   Approval[]
+
+  @@map("bookings")
+}
+
+model ServiceHistory {
+  id           Int       @id @default(autoincrement())
+  vehicleId    Int
+  serviceDate  DateTime
+  description  String
+  cost         Float
+  createdAt    DateTime  @default(now())
+
+  vehicle      Vehicle   @relation(fields: [vehicleId], references: [id])
+
+  @@map("service_histories")
+}
+
+model FuelConsumption {
+  id                Int       @id @default(autoincrement())
+  vehicleId         Int
+  date              DateTime
+  cost              Float
+  amount            Float
+  kilometers        Float
+  distanceTravelled Float
+  createdAt         DateTime  @default(now())
+
+  vehicle           Vehicle   @relation(fields: [vehicleId], references: [id])
+
+  @@map("fuel_consumptions")
+}
+
+model ActivityLog {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  action      String
+  description String
+  timestamp   DateTime  @default(now())
+
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@map("activity_logs")
 }
 
 enum Position {
