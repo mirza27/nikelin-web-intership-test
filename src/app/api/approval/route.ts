@@ -10,11 +10,16 @@ export async function GET(request: Request) {
         return NextResponse.json({
             success: false,
             message: "Anda Belum logged in",
-        }, { status: 400 })
+        }, { status: 400 }
+
+
+
+
+        )
     } else {
 
         try {
-            const approvals: Approval[] = await prisma.approval.findMany({
+            const approvals = await prisma.approval.findMany({
                 where: {
                     approverId: parseInt(session?.userId as string),
                 }

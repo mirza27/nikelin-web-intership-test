@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
 
     try {
         // Cari pengguna berdasarkan alamat email
-        const admin :Admin  = await prisma.admin.findUnique({
+        const admin = await prisma.admin.findUnique({
             where: {
                 email: email,
             },
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
 
         // Bandingkan password yang diberikan dengan password yang tersimpan dalam database
         const passwordMatch = await bcrypt.compare(password, admin.password);
-        
+
 
         // Jika password tidak cocok
         if (!passwordMatch) {
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
                 message: "Login successful",
                 user: {
                     id: admin.id,
-                    email:admin.email,
+                    email: admin.email,
                 },
             },
             {

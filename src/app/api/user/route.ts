@@ -5,8 +5,8 @@ import bcrypt from "bcrypt";
 
 // Insert new User
 export async function POST(request: Request) {
-    const { name, email, password, role , department} = await request.json();
-    
+    const { name, email, password, role, department } = await request.json();
+
     try {
         // Periksa apakah email sudah digunakan
         const existingUser = await prisma.user.findUnique({
@@ -31,10 +31,10 @@ export async function POST(request: Request) {
         // Hash password sebelum menyimpannya di database
         const hashedPassword = await bcrypt.hash(password, 10);
         // console.log("ini adalah ",Position.EMPLOYEE,)
-       
+
 
         // Buat user baru dalam database
-        const newUser: User = await prisma.user.create({
+        const newUser = await prisma.user.create({
             data: {
                 name: name,
                 email: email,
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
                 role: role,
                 department: department,
             },
-        }); 
+        });
 
         // Jika registrasi berhasil, kirim respons berhasil
         return NextResponse.json(
@@ -60,7 +60,7 @@ export async function POST(request: Request) {
             }
         );
 
-        
+
     } catch (error) {
         console.error("Registration error:", error);
         return NextResponse.json(
@@ -73,5 +73,33 @@ export async function POST(request: Request) {
                 status: 500, // Internal Server Error
             }
         );
+    }
+}
+
+// get all users
+export async function GET(request: Request) {
+    try {
+        const users = await prisma.user.findMany();
+        return NextResponse.json(
+            {
+                success: true,
+                users: users,
+            },
+            {
+                status: 200, // OK
+            }
+        );
+
+
+    } catch (error) {
+        console.log(error);
+        return NextResponse.json({
+            success: false,
+            message: "Error Get Book By year",
+            error: error,
+        },
+            {
+                status: 500,
+            })
     }
 }

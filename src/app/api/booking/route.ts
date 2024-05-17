@@ -5,7 +5,7 @@ import prisma from "../../../../prisma";
 // get all booking for admins
 export async function GET(request: Request) {
     try {
-        const bookings: Booking[] = await prisma.booking.findMany({
+        const bookings = await prisma.booking.findMany({
             include: {
                 vehicle: true,
                 approver: false,
@@ -40,12 +40,12 @@ export async function GET(request: Request) {
 // add new booking by admin
 export async function POST(request: Request) {
     const { bookingName, description, vehicleId, purpose, approverId, driverId, userId, startDate, endDate, } = await request.json();
-    
+
     const formattedStartDate = new Date(startDate).toISOString();
     const formattedEndDate = new Date(endDate).toISOString();
 
     try {
-        const newBooking: Booking = await prisma.booking.create({
+        const newBooking = await prisma.booking.create({
             data: {
                 bookingName: bookingName,
                 description: description,
@@ -70,11 +70,8 @@ export async function POST(request: Request) {
                         id: parseInt(userId)
                     }
                 },
-                // approverId: approverId, 
-                // driverId: driverId, 
-                // userId: userId, 
-                startDate : formattedStartDate,
-                endDate : formattedEndDate,
+                startDate: formattedStartDate,
+                endDate: formattedEndDate,
             }
         })
 

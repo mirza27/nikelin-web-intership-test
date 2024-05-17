@@ -56,7 +56,9 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
 
         if (allApproved) {
             newBookingStatus = "APPROVED";
-        } else if (allRejected) {
+        } else if (allRejected){
+            newBookingStatus = "REJECTED";
+        } else if (updatedApproval.level === 2 && (updatedApproval.status === "REJECTED") || ) {
             newBookingStatus = "REJECTED";
         }
 
