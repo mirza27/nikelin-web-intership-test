@@ -8,6 +8,9 @@ import { NextApiRequest, NextApiResponse } from 'next'
 export async function GET(request: NextApiRequest, response: NextApiResponse) {
     const session = await getSession();
 
+
+
+
     if (!session) {
         return NextResponse.json({
             success: false,
@@ -15,19 +18,30 @@ export async function GET(request: NextApiRequest, response: NextApiResponse) {
             data: null
         }, { status: 400 },)
     } else if (session.role == 'admin') {
-        console.log("bukan admin")
+        const user = await prisma.admin.findUnique({
+            where: {
+                id: parseInt(session?.userId as string)
+            },
+        })
+
         return NextResponse.json({
             success: true,
             message: "You are logged in",
             is_admin: true,
-            user: session.user,
+            user: user,
         }, { status: 200 },)
     } else {
+        const user = await prisma.user.findUnique({
+            where: {
+                id: parseInt(session?.userId as string)
+            },
+        })
+
         return NextResponse.json({
             success: true,
             message: "You are logged in",
             is_admin: false,
-            user: session.user,
+            user: user,
         }, { status: 200 },)
     }
 }

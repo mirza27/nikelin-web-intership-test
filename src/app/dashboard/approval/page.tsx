@@ -1,4 +1,5 @@
 'use client'
+import { formatDate } from '@/app/lib/time'
 import { StatusComponentButton } from '@/components/button'
 import { useEffect, useState } from 'react'
 import swal from 'sweetalert2'
@@ -21,7 +22,11 @@ export default function ApprovalPage() {
         }
     }
 
-    const approve = async (id: string) => {
+    const updateApproval = async (
+        id: string,
+        status: 'APPROVED' | 'REJECTED',
+        comments: string
+    ) => {
         try {
             const response = await fetch(`/api/approval/${id}`, {
                 method: 'PATCH',
@@ -29,8 +34,8 @@ export default function ApprovalPage() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    approvalStatus: 'APPROVED',
-                    comments: '',
+                    approvalStatus: status,
+                    comments: comments,
                 }),
             })
             if (response.ok) {
@@ -45,40 +50,7 @@ export default function ApprovalPage() {
                 }
             }
         } catch (error) {
-            console.error('Approve error:', error)
-            swal.fire({
-                title: 'Error',
-                text: 'An error occurred while updating approval',
-                icon: 'error',
-            })
-        }
-    }
-
-    const reject = async (id: string) => {
-        try {
-            const response = await fetch(`/api/approval/${id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    approvalStatus: 'REJECTED',
-                    comments: '',
-                }),
-            })
-            if (response.ok) {
-                const { success } = await response.json()
-                if (success) {
-                    getMyApproval()
-                    swal.fire({
-                        title: 'Success',
-                        text: 'Approval was successfully updated',
-                        icon: 'success',
-                    })
-                }
-            }
-        } catch (error) {
-            console.error('Reject error:', error)
+            console.error(`${status} error:`, error)
             swal.fire({
                 title: 'Error',
                 text: 'An error occurred while updating approval',
@@ -92,13 +64,18 @@ export default function ApprovalPage() {
             title: 'Are you sure?',
             text: `Do you want to ${action} this approval?`,
             icon: 'warning',
+            input: 'textarea',
+            inputPlaceholder: 'Add your comments here...',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, do it!',
         }).then((result: any) => {
             if (result.isConfirmed) {
-                action === 'approve' ? approve(id) : reject(id)
+                const comments = result.value || ''
+                action === 'approve'
+                    ? updateApproval(id, 'APPROVED', comments)
+                    : updateApproval(id, 'REJECTED', comments)
             }
         })
     }
@@ -144,6 +121,12 @@ export default function ApprovalPage() {
                                             scope="col"
                                             className="py-3.5 px-3 text-left text-sm font-semibold text-gray-900"
                                         >
+                                            Created at
+                                        </th>
+                                        <th
+                                            scope="col"
+                                            className="py-3.5 px-3 text-left text-sm font-semibold text-gray-900"
+                                        >
                                             Comment
                                         </th>
                                         <th
@@ -166,6 +149,11 @@ export default function ApprovalPage() {
                                             </td>
                                             <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
                                                 {approval.status}
+                                            </td>
+                                            <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                                                {formatDate(
+                                                    approval.createdAt.toLocaleString()
+                                                )}
                                             </td>
                                             <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
                                                 {approval.comments}

@@ -87,36 +87,6 @@ export async function POST(request: Request) {
             }
         })
 
-        // // ambil data supervisor dan manager pada departemen yang sama
-        // const supervisor = await prisma.user.findUnique({
-        //     where: {
-        //         id: approverId,
-        //     },
-        // });
-
-        // if (!supervisor) {
-        //     throw new Error('Supervisor not found');
-        // }
-
-        // const manager = await prisma.user.findFirst({
-        //     where: {
-        //         department: supervisor.department,
-        //         role: 'MANAGER',
-        //     },
-        // });
-
-        // if (!manager) {
-        //     throw new Error('Manager not found for the given department');
-        // }
-
-        // const newApproval2 = await prisma.approval.create({
-        //     data: {
-        //         bookingId: newBooking.id,
-        //         approverId: manager.id,
-        //         level: 2,
-        //     }
-        // })
-
         return NextResponse.json(
             {
                 sucess: true,

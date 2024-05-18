@@ -1,24 +1,21 @@
 import prisma from '../../../../../prisma'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
-) {
+export async function GET(req: NextRequest, res: NextApiResponse) {
     try {
         const bookings = await prisma.booking.groupBy({
-            by: ['createdAt'],
+            by: ['startDate'],
             _count: {
                 id: true,
             },
         })
 
-        // Satukan jika bulan sama
+        // satukan jika bulan sama
         const result = bookings.reduce(
             (acc, booking) => {
-                const month = booking.createdAt.getMonth() + 1
-                const year = booking.createdAt.getFullYear()
+                const month = booking.startDate.getMonth() + 1
+                const year = booking.startDate.getFullYear()
                 const key = `${year}-${month.toString().padStart(2, '0')}`
                 acc[key] = (acc[key] || 0) + booking._count.id
                 return acc
@@ -26,20 +23,15 @@ export default async function handler(
             {} as Record<string, number>
         )
 
-        const dates = Object.keys(result)
-        const counts = Object.values(result)
-        console.log(dates, counts)
-        console.log(typeof dates)
-
         const data = Object.keys(result).map((date) => ({
             date: date,
             count: result[date],
         }))
-        console.log(data)
+
         return NextResponse.json(
             {
                 success: true,
-                message: 'Success get all booking',
+                message: 'Success get all booking by month',
                 data: data,
             },
             { status: 200 }
@@ -49,7 +41,7 @@ export default async function handler(
         return NextResponse.json(
             {
                 sucess: false,
-                message: 'Failed get all booking',
+                message: 'Failed get all booking by month',
                 data: null,
             },
             {

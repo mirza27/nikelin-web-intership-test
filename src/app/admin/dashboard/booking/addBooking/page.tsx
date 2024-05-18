@@ -418,7 +418,7 @@ export default function AddBooking() {
                                                 </label>
                                                 <input
                                                     type="date"
-                                                    min={tanggalBesok()}
+                                                    min={startDate}
                                                     name="endDate"
                                                     id="endDate"
                                                     value={endDate}

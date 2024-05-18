@@ -1,10 +1,17 @@
 'use client'
 import dynamic from 'next/dynamic'
+import { useEffect, useState } from 'react'
+import Chart from 'react-apexcharts'
 
 const ApexChart = dynamic(() => import('react-apexcharts'), { ssr: false })
 
-export function ChartData() {
-    const option = {
+interface LineDataProps {
+    categories: string[]
+    seriesData: number[]
+}
+
+export function LineData({ categories, seriesData }: LineDataProps) {
+    const options = {
         chart: {
             toolbar: {
                 show: false,
@@ -12,14 +19,14 @@ export function ChartData() {
             id: 'example-data',
         },
         xaxis: {
-            categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999],
+            categories: categories,
         },
     }
 
     const series = [
         {
-            name: 'series-1',
-            data: [30, 40, 35, 50, 49, 60, 70, 91, 125],
+            name: 'Bookings',
+            data: seriesData,
         },
     ]
 
@@ -27,11 +34,44 @@ export function ChartData() {
         <>
             <ApexChart
                 type="line"
-                options={option}
+                options={options}
                 series={series}
                 height={200}
                 width={600}
             />
         </>
+    )
+}
+
+export function BarChart({ categories, seriesData }: LineDataProps) {
+    const options = {
+        chart: {
+            id: 'basic-bar',
+        },
+        xaxis: {
+            categories: categories,
+        },
+    }
+
+    const series = [
+        {
+            name: 'CarUsage',
+            data: seriesData,
+        },
+    ]
+
+    return (
+        <div className="app">
+            <div className="row">
+                <div className="mixed-chart">
+                    <Chart
+                        options={options}
+                        series={series}
+                        type="bar"
+                        width="500"
+                    />
+                </div>
+            </div>
+        </div>
     )
 }
