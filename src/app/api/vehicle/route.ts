@@ -4,16 +4,16 @@ import prisma from "../../../../prisma";
 // get all vehicle 
 export async function GET(request: Request) {
 
-    
+
     try {
-        const vehicles: Vehicle[] = await prisma.vehicle.findMany({
+        const vehicles = await prisma.vehicle.findMany({
             include: {
                 bookings: false,
                 fuelConsumptions: false,
                 serviceHistories: false
             }
         });
-        
+
 
         return NextResponse.json(
             {
