@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../../prisma";
 import { getSession } from "@/app/lib/session";
 import { NextApiRequest, NextApiResponse } from 'next'
+import { redirect } from "next/navigation";
 
 
 // get user session
@@ -12,6 +13,7 @@ export async function GET(request: NextRequest, response: NextResponse) {
 
 
     if (!session) {
+        redirect('/login')
         return NextResponse.json({
             success: false,
             message: "You haven't logged in",

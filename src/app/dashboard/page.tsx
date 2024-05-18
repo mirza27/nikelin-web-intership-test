@@ -1,7 +1,5 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
-import * as XLSX from 'xlsx'
 import { BarChart, LineData } from '@/components/chart'
 import {
     Card,

@@ -11,7 +11,7 @@ import {
     XMarkIcon,
 } from '@heroicons/react/24/outline'
 import Swal from 'sweetalert2'
-import { useRouter } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 
 const initialNavigation = [
     {
@@ -63,7 +63,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         title: 'Session outdated',
                         text: data.message,
                     })
-                    router.push('/login')
+                    redirect('/login')
                 } else {
                     setUser(data.user)
                 }
@@ -77,7 +77,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             .json()
                             .then((data) => data.message),
                     })
-                    router.push('/login')
+                    redirect('/login')
                 }
             }
         } catch (error) {
