@@ -13,7 +13,7 @@ import {
 import Swal from 'sweetalert2'
 import { useRouter } from 'next/navigation'
 
-const navigation = [
+const initialNavigation = [
     {
         name: 'Dashboard',
         href: '/dashboard',
@@ -49,6 +49,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const router = useRouter()
     const [user, setUser] = useState<User | null>()
+    const [navigation, setNavigation] = useState(initialNavigation)
 
     const checkSession = async () => {
         try {
@@ -93,6 +94,27 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         checkSession()
         setIsLoading(false)
     }, [])
+
+    useEffect(() => {
+        // Set the current navigation item based on the URL path
+        const currentPath = window.location.pathname
+        setNavigation(
+            navigation.map((item) => ({
+                ...item,
+                current: item.href === currentPath,
+            }))
+        )
+    }, [])
+
+    const handleNavigationClick = (href: string) => {
+        setNavigation(
+            navigation.map((item) => ({
+                ...item,
+                current: item.href === href,
+            }))
+        )
+        router.push(href)
+    }
 
     return (
         <>
@@ -244,6 +266,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                     <a
                                         key={item.name}
                                         href={item.href}
+                                        onClick={() =>
+                                            handleNavigationClick(item.href)
+                                        }
                                         className={classNames(
                                             item.current
                                                 ? 'bg-gray-100 text-gray-900'

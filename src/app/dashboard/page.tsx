@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/card'
 
 export default function AdminDashboard() {
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [selectedYear, setSelectedYear] = useState<number>(
         new Date().getFullYear()
     )

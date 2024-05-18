@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 
 export default function VehiclePage() {
-    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [isLoading, setIsLoading] = useState<boolean>(true)
     const [vehicles, setVehicles] = useState<Vehicle[]>([])
     const [inUse, setInUse] = useState<Record<number, boolean | null>>({})
 
@@ -171,7 +171,7 @@ export default function VehiclePage() {
                                                 </td>
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                     <a
-                                                        href={`/admin/dashboard/vehicle/detail/${vehicle.id}`}
+                                                        // href={`/admin/dashboard/vehicle/detail/${vehicle.id}`}
                                                         text-decoration="color-indigo-600"
                                                     >
                                                         More details..

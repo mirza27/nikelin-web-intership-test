@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "../../../../prisma";
+import { getSession } from "@/app/lib/session";
 
 
 // get all booking for admins
@@ -47,6 +48,8 @@ export async function POST(request: Request) {
     const formattedStartDate = new Date(startDate).toISOString();
     const formattedEndDate = new Date(endDate).toISOString();
 
+    const session = await getSession();
+
     try {
         const newBooking = await prisma.booking.create({
             data: {
@@ -78,6 +81,19 @@ export async function POST(request: Request) {
             }
         })
 
+        // audit actvity log
+        await prisma.activityLog.create({
+            data: {
+                action: 'ADMIN CREATE',
+                description: "CREATE NEW BOOKING ID : " + newBooking.id,
+                user: {
+                    connect: {
+                        id: parseInt(session!.userId! as string),
+                    }
+                }
+            },
+        })
+
         // approval untuk level 1
         const newApproval = await prisma.approval.create({
             data: {
@@ -85,6 +101,21 @@ export async function POST(request: Request) {
                 approverId: approverId, // user dengan role supervisor
                 level: 1,
             }
+        })
+
+
+
+        // audit actvity log
+        await prisma.activityLog.create({
+            data: {
+                action: 'ADMIN CREATE',
+                description: "CREATE NEW APPROVAL ID : " + newApproval.id,
+                user: {
+                    connect: {
+                        id: parseInt(session!.userId! as string),
+                    }
+                }
+            },
         })
 
         return NextResponse.json(

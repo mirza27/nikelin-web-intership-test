@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "../../../../../prisma";
 import { getSession } from "@/app/lib/session";
+import { connect } from "http2";
 
 
 interface Params {
@@ -82,6 +83,19 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
                 );
             }
 
+            // audit actvity log
+            await prisma.activityLog.create({
+                data: {
+                    action: 'UPDATE',
+                    description: "APPROVED APPROVAL LEVEL 1 ID " + choosedApproval.id,
+                    user: {
+                        connect: {
+                            id: parseInt(session!.userId! as string),
+                        }
+                    }
+                },
+            })
+
             const newApproval2 = await prisma.approval.create({
                 data: {
                     bookingId: choosedApproval.bookingId,
@@ -91,6 +105,19 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
                     approverId: manager!.id!,
                 },
             });
+
+            // audit actvity log
+            await prisma.activityLog.create({
+                data: {
+                    action: 'CREATE',
+                    description: "CREATE NEW APPROVAL ID : " + newApproval2.id,
+                    user: {
+                        connect: {
+                            id: parseInt(session!.userId! as string),
+                        }
+                    }
+                },
+            })
         }
 
         // update approval jika rejected / approved
@@ -99,12 +126,38 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
             data: { status: approvalStatus, comments: comments },
         });
 
-        // jika level 2 rejected --> booking rejected
+        //audit actvity log
+        await prisma.activityLog.create({
+            data: {
+                action: 'UPDATE',
+                description: `${approvalStatus} APPROVAL ID: ` + updatedApproval.id,
+                user: {
+                    connect: {
+                        id: parseInt(session!.userId! as string),
+                    }
+                }
+            },
+        })
+
+
+        // untuk update (approve/reject) approval level 2 dan ketika reject approval level 1
         if (approvalStatus === "REJECTED" || choosedApproval.level === 2) {
             updatedBooking = await prisma.booking.update({
                 where: { id: choosedApproval.bookingId },
                 data: { status: approvalStatus },
             });
+
+            await prisma.activityLog.create({
+                data: {
+                    action: 'UPDATE',
+                    description: `${approvalStatus} BOOKING ID: ` + updatedBooking.id,
+                    user: {
+                        connect: {
+                            id: parseInt(session!.userId! as string),
+                        }
+                    }
+                },
+            })
         }
 
         return NextResponse.json(
