@@ -2,7 +2,7 @@ import prisma from '../../../../../prisma'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(req: NextRequest, res: NextApiResponse) {
+export async function GET(req: NextRequest, res: NextResponse) {
     try {
         const bookings = await prisma.booking.groupBy({
             by: ['startDate'],

@@ -36,7 +36,7 @@ export async function POST(request: Request) {
                 date: 'desc'
             }
         });
-        
+
         // hitung berdasarkan kilometer sekarang dan sebelumnya
         let newFuelConsumptionValue: number | null = null;
         if (previousFuelConsumption) {
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
             newFuelConsumptionValue = distanceTravelled / amount;
         }
 
-        const vehicle: Vehicle = await prisma.vehicle.update({
+        const vehicle = await prisma.vehicle.update({
             where: {
                 id: parseInt(vehicleId)
             },
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
                 }
             }
         });
-        
+
 
         return NextResponse.json(
             {

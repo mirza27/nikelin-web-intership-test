@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { NextRequest, NextResponse } from 'next/server'
 
 
-export async function GET(req: NextRequest, res: NextApiResponse) {
+export async function GET(req: NextRequest, res: NextResponse) {
     try {
         const bookingsCount = await prisma.vehicle.findMany({
             select: {

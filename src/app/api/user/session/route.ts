@@ -1,11 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../../prisma";
 import { getSession } from "@/app/lib/session";
 import { NextApiRequest, NextApiResponse } from 'next'
 
 
 // get user session
-export async function GET(request: NextApiRequest, response: NextApiResponse) {
+export async function GET(request: NextRequest, response: NextResponse) {
     const session = await getSession();
 
 
