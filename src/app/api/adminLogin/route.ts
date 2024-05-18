@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
         }
 
         // buat sesssi
-        await createSession(admin.id.toString(), 'admin');
+        await createSession(admin.id.toString(), 'admin', '');
 
         // Jika email dan password cocok, kirim respons berhasil
         return NextResponse.json(

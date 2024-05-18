@@ -1,5 +1,5 @@
 'use client'
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import {
     Bars3Icon,
@@ -9,6 +9,8 @@ import {
     UsersIcon,
     XMarkIcon,
 } from '@heroicons/react/24/outline'
+import { useRouter } from 'next/navigation'
+import Swal from 'sweetalert2'
 
 const navigation = [
     {
@@ -42,18 +44,57 @@ function classNames(...classes: (string | undefined | null | false)[]) {
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+    const [isLoading, setIsLoading] = useState(true)
     const [sidebarOpen, setSidebarOpen] = useState(false)
+    const router = useRouter()
+    const [user, setUser] = useState<Admin | null>()
+
+    const checkSession = async () => {
+        try {
+            const response = await fetch('/api/user/session')
+            if (response.ok) {
+                const data = await response.json()
+                if (!data.is_admin) {
+                    console.log('User is not admin')
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Session outdated',
+                        text: data.message,
+                    })
+                    router.push('/login-admin')
+                } else {
+                    setUser(data.user)
+                }
+            } else {
+                setUser(null)
+                if (response.status === 400) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Session outdated',
+                        text: await response
+                            .json()
+                            .then((data) => data.message),
+                    })
+                    router.push('/login-admin')
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error)
+            Swal.fire({
+                icon: 'error',
+                title: 'Terjadi kesalahan',
+                text: 'Terjadi kesalahan saat memproses permintaan Anda.',
+            })
+        }
+    }
+
+    useEffect(() => {
+        checkSession()
+        setIsLoading(false)
+    }, [])
 
     return (
         <>
-            {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full">
-        <body class="h-full">
-        ```
-      */}
             <div>
                 <Transition.Root show={sidebarOpen} as={Fragment}>
                     <Dialog
@@ -145,30 +186,36 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                             ))}
                                         </nav>
                                     </div>
-                                    <div className="flex flex-shrink-0 border-t border-gray-200 p-4">
-                                        <a
-                                            href="#"
-                                            className="group block flex-shrink-0"
-                                        >
-                                            <div className="flex items-center">
-                                                <div>
-                                                    <img
-                                                        className="inline-block h-10 w-10 rounded-full"
-                                                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                                        alt=""
-                                                    />
+                                    {isLoading ? (
+                                        <p className="text-center my-4">
+                                            Loading...
+                                        </p>
+                                    ) : (
+                                        <div className="flex flex-shrink-0 border-t border-gray-200 p-4">
+                                            <a
+                                                href="#"
+                                                className="group block flex-shrink-0"
+                                            >
+                                                <div className="flex items-center">
+                                                    <div>
+                                                        <img
+                                                            className="inline-block h-10 w-10 rounded-full"
+                                                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                                            alt=""
+                                                        />
+                                                    </div>
+                                                    <div className="ml-3">
+                                                        <p className="text-base font-medium text-gray-700 group-hover:text-gray-900">
+                                                            {user!.email}
+                                                        </p>
+                                                        <p className="text-sm font-medium text-gray-500 group-hover:text-gray-700">
+                                                            Admin
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                                <div className="ml-3">
-                                                    <p className="text-base font-medium text-gray-700 group-hover:text-gray-900">
-                                                        Tom Cook
-                                                    </p>
-                                                    <p className="text-sm font-medium text-gray-500 group-hover:text-gray-700">
-                                                        View profile
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
+                                            </a>
+                                        </div>
+                                    )}
                                 </Dialog.Panel>
                             </Transition.Child>
                             <div className="w-14 flex-shrink-0">
@@ -216,30 +263,34 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                 ))}
                             </nav>
                         </div>
-                        <div className="flex flex-shrink-0 border-t border-gray-200 p-4">
-                            <a
-                                href="#"
-                                className="group block w-full flex-shrink-0"
-                            >
-                                <div className="flex items-center">
-                                    <div>
-                                        <img
-                                            className="inline-block h-9 w-9 rounded-full"
-                                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                            alt=""
-                                        />
+                        {isLoading ? (
+                            <p className="text-center my-4">Loading...</p>
+                        ) : (
+                            <div className="flex flex-shrink-0 border-t border-gray-200 p-4">
+                                <a
+                                    href="#"
+                                    className="group block w-full flex-shrink-0"
+                                >
+                                    <div className="flex items-center">
+                                        <div>
+                                            <img
+                                                className="inline-block h-9 w-9 rounded-full"
+                                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                                alt=""
+                                            />
+                                        </div>
+                                        <div className="ml-3">
+                                            <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
+                                                {user!.email}
+                                            </p>
+                                            <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700">
+                                                Admin
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div className="ml-3">
-                                        <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
-                                            Tom Cook
-                                        </p>
-                                        <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700">
-                                            View profile
-                                        </p>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
+                                </a>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="flex flex-1 flex-col md:pl-64">

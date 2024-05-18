@@ -23,7 +23,7 @@ export async function GET(request: Request, { params }: { params: Params }) {
         }
 
 
-        const booking: Booking = await prisma.booking.findUnique({
+        const booking = await prisma.booking.findUnique({
             where: {
                 id: booking_id,
             }, include: {

@@ -11,7 +11,10 @@ export async function GET(request: Request) {
                 approver: false,
                 driver: false,
                 user: true,
-            }
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
         });
 
         return NextResponse.json(
@@ -84,35 +87,35 @@ export async function POST(request: Request) {
             }
         })
 
-        // ambil data supervisor dan manager pada departemen yang sama
-        const supervisor = await prisma.user.findUnique({
-            where: {
-                id: approverId,
-            },
-        });
+        // // ambil data supervisor dan manager pada departemen yang sama
+        // const supervisor = await prisma.user.findUnique({
+        //     where: {
+        //         id: approverId,
+        //     },
+        // });
 
-        if (!supervisor) {
-            throw new Error('Supervisor not found');
-        }
+        // if (!supervisor) {
+        //     throw new Error('Supervisor not found');
+        // }
 
-        const manager = await prisma.user.findFirst({
-            where: {
-                department: supervisor.department,
-                role: 'MANAGER',
-            },
-        });
+        // const manager = await prisma.user.findFirst({
+        //     where: {
+        //         department: supervisor.department,
+        //         role: 'MANAGER',
+        //     },
+        // });
 
-        if (!manager) {
-            throw new Error('Manager not found for the given department');
-        }
+        // if (!manager) {
+        //     throw new Error('Manager not found for the given department');
+        // }
 
-        const newApproval2 = await prisma.approval.create({
-            data: {
-                bookingId: newBooking.id,
-                approverId: manager.id,
-                level: 2,
-            }
-        })
+        // const newApproval2 = await prisma.approval.create({
+        //     data: {
+        //         bookingId: newBooking.id,
+        //         approverId: manager.id,
+        //         level: 2,
+        //     }
+        // })
 
         return NextResponse.json(
             {

@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
 
     try {
         // Cari pengguna berdasarkan alamat email
-        const user :User  = await prisma.user.findUnique({
+        const user = await prisma.user.findUnique({
             where: {
                 email: email,
             },
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
 
         // Bandingkan password yang diberikan dengan password yang tersimpan dalam database
         const passwordMatch = await bcrypt.compare(password, user.password);
-        
+
 
         // Jika password tidak cocok
         if (!passwordMatch) {
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
         }
 
         // buat sesssi
-        await createSession(user.id.toString(), user.role.toString());
+        await createSession(user.id.toString(), user.role.toString(), user.department ?? '');
 
         // Jika email dan password cocok, kirim respons berhasil
         return NextResponse.json(
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
                 message: "Login successful",
                 user: {
                     id: user.id,
-                    email:user.email,
+                    email: user.email,
                 },
             },
             {

@@ -12,9 +12,6 @@ export async function GET(request: Request) {
             message: "Anda Belum logged in",
         }, { status: 400 }
 
-
-
-
         )
     } else {
 
@@ -22,7 +19,9 @@ export async function GET(request: Request) {
             const approvals = await prisma.approval.findMany({
                 where: {
                     approverId: parseInt(session?.userId as string),
-                }
+                }, orderBy: {
+                    createdAt: 'desc',
+                },
             })
 
             if (!approvals.length) {

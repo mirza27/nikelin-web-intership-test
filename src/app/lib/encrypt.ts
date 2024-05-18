@@ -4,7 +4,7 @@ const secretKey = process.env.SESSION_SECRET
 const encodedKey = new TextEncoder().encode(secretKey)
 
 // membuat enkripsi payload informasi user
-export async function encrypt(payload: { userId: string, role: string, expiresAt: Date }) {
+export async function encrypt(payload: { userId: string, role: string, department: string, expiresAt: Date }) {
   return new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()

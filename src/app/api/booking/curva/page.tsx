@@ -1,7 +1,11 @@
 import prisma from '../../../../../prisma'
+import { NextApiRequest, NextApiResponse } from 'next'
 import { NextResponse } from 'next/server'
 
-export default async function handler(request: Request) {
+export default async function handler(
+    req: NextApiRequest,
+    res: NextApiResponse
+) {
     try {
         const bookings = await prisma.booking.groupBy({
             by: ['createdAt'],
@@ -10,7 +14,7 @@ export default async function handler(request: Request) {
             },
         })
 
-        // satukan jika bulan sama
+        // Satukan jika bulan sama
         const result = bookings.reduce(
             (acc, booking) => {
                 const month = booking.createdAt.getMonth() + 1
@@ -22,15 +26,23 @@ export default async function handler(request: Request) {
             {} as Record<string, number>
         )
 
+        const dates = Object.keys(result)
+        const counts = Object.values(result)
+        console.log(dates, counts)
+        console.log(typeof dates)
+
+        const data = Object.keys(result).map((date) => ({
+            date: date,
+            count: result[date],
+        }))
+        console.log(data)
         return NextResponse.json(
             {
-                sucess: true,
+                success: true,
                 message: 'Success get all booking',
-                data: result,
+                data: data,
             },
-            {
-                status: 200,
-            }
+            { status: 200 }
         )
     } catch (error) {
         console.log('Get all booking error:', error)

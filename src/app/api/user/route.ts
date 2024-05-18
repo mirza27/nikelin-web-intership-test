@@ -3,11 +3,14 @@ import prisma from "../../../../prisma";
 import bcrypt from "bcrypt";
 
 
+
 // Insert new User
 export async function POST(request: Request) {
     const { name, email, password, role, department } = await request.json();
 
+
     try {
+
         // Periksa apakah email sudah digunakan
         const existingUser = await prisma.user.findUnique({
             where: {

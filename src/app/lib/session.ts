@@ -4,7 +4,7 @@ import { encrypt, decrypt } from './encrypt'
 // get sesi
 export async function getSession() {
     const cookie = cookies().get('session')?.value
-    if(!cookie) {
+    if (!cookie) {
         return null
     } else {
         return await decrypt(cookie)
@@ -13,9 +13,9 @@ export async function getSession() {
 
 
 // membuat sesi
-export async function createSession(userId: string, role: string) {
+export async function createSession(userId: string, role: string, department: string) {
     const expiresAt = new Date(Date.now() + 1 * 60 * 60 * 1000);  // 1 jam
-    const session = await encrypt({ userId, role ,expiresAt })
+    const session = await encrypt({ userId, role, department, expiresAt })
 
     cookies().set('session', session, {
         httpOnly: true,
@@ -47,6 +47,6 @@ export async function updateSession() {
 
 export function deleteSession() {
     cookies().delete('session')
-  }
+}
 
 export { decrypt }

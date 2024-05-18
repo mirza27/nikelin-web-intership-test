@@ -7,12 +7,15 @@ interface Params {
     id: string;
 }
 
+
 // update approval status
 export async function PATCH(request: Request, { params }: { params: Params }) {
     const approval_id = parseInt(params.id);
     const {
         approvalStatus, comments,
     } = await request.json();
+
+    const session = await getSession();
 
     try {
         if (isNaN(approval_id)) {
@@ -28,62 +31,91 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
             );
         }
 
-        // set any level approval rejected / approved 
-        const updatedApproval: Approval = await prisma.approval.update({
-            where: {
-                id: approval_id
-            },
-            data: {
-                status: approvalStatus,
-                comments: comments
-            }
+        // cari approval yang akan diupdate
+        const choosedApproval = await prisma.approval.findUnique({
+            where: { id: approval_id },
+            include: { booking: true },
         });
 
-
-        // update booking status
-        const approvals: Approval[] = await prisma.approval.findMany({
-            where: {
-                bookingId: updatedApproval.bookingId
-            }
-        });
-
-        // cek setiap approval status
-        const allApproved = approvals.every((a: any) => a.status === "APPROVED");
-        const allRejected = approvals.every((a: any) => a.status === "REJECTED");
-
-        // let newBookingStatus: BookingStatus | null = null;
-        let newBookingStatus: string | null = null;
-
-        if (allApproved) {
-            newBookingStatus = "APPROVED";
-        } else if (allRejected){
-            newBookingStatus = "REJECTED";
-        } else if (updatedApproval.level === 2 && (updatedApproval.status === "REJECTED") || ) {
-            newBookingStatus = "REJECTED";
+        if (!choosedApproval) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: "Approval not found",
+                    data: null,
+                },
+                { status: 404 } // Not Found
+            );
         }
 
-        // update status booking
-        if (newBookingStatus) {
-            await prisma.booking.update({
+        let updatedApproval, updatedBooking;
+
+        // jika level 1 approved buat level 2
+        if (approvalStatus === "APPROVED" && choosedApproval.level === 1) {
+            const manager = await prisma.user.findFirst({
                 where: {
-                    id: updatedApproval.bookingId
+                    department: session!.department!,
+                    role: 'MANAGER',
+
                 },
+            });
+            if (manager!.department !== session!.department!) {
+                console.log("manager tidak sama dengan department user", session?.userId);
+                return NextResponse.json(
+                    {
+                        success: false,
+                        message: "Manager not found",
+                        data: null,
+                    },
+                    { status: 404 } // Not Found
+                );
+            }
+
+            if (!manager) {
+                return NextResponse.json(
+                    {
+                        success: false,
+                        message: "Manager not found",
+                        data: null,
+                    },
+                    { status: 404 } // Not Found
+                );
+            }
+
+            const newApproval2 = await prisma.approval.create({
                 data: {
-                    status: newBookingStatus
-                }
+                    bookingId: choosedApproval.bookingId,
+                    level: 2,
+                    status: "PENDING",
+                    comments: '',
+                    approverId: manager!.id!,
+                },
+            });
+        }
+
+        // update approval jika rejected / approved
+        updatedApproval = await prisma.approval.update({
+            where: { id: approval_id },
+            data: { status: approvalStatus, comments: comments },
+        });
+
+        // jika level 2 rejected --> booking rejected
+        if (approvalStatus === "REJECTED" || choosedApproval.level === 2) {
+            updatedBooking = await prisma.booking.update({
+                where: { id: choosedApproval.bookingId },
+                data: { status: approvalStatus },
             });
         }
 
         return NextResponse.json(
             {
                 success: true,
-                message: "Success update approval status",
-                data: updatedApproval,
+                message: "Successfully updated approval status",
+                data: { updatedApproval, updatedBooking },
             },
-            {
-                status: 200, // OK
-            }
+            { status: 200 } // OK
         );
+
 
     } catch (error) {
         console.log(error);
