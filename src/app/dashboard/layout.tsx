@@ -51,6 +51,38 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>()
     const [navigation, setNavigation] = useState(initialNavigation)
 
+    const handleLogout = async () => {
+        try {
+            const response = await fetch('/api/logout', {
+                method: 'POST',
+            })
+            if (response.ok) {
+                const data = await response.json()
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: data.message,
+                    }).then(() => {
+                        router.push('/login')
+                    })
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: data.message,
+                    })
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error)
+            Swal.fire({
+                icon: 'error',
+                title: 'Terjadi kesalahan',
+                text: 'Terjadi kesalahan saat memproses permintaan Anda.',
+            })
+            router.push('/login')
+        }
+    }
+
     const checkSession = async () => {
         try {
             const response = await fetch('/api/user/session')
@@ -289,6 +321,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                         {item.name}
                                     </a>
                                 ))}
+                                <a
+                                    className="'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+                                            'group flex items-center px-2 py-2 text-red-500 text-sm font-medium rounded-md font-red'"
+                                    onClick={() => handleLogout()}
+                                >
+                                    Logout
+                                </a>
                             </nav>
                         </div>
                         {isLoading ? (
