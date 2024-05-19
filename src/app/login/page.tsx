@@ -25,7 +25,7 @@ export default function LoginAdminPage() {
                     title: 'Login berhasil',
                     text: 'Anda telah berhasil masuk.',
                 })
-                redirect('/dashboard')
+                router.push('/dashboard')
             } else {
                 const responseData = await response.json()
                 if (response.status === 404) {

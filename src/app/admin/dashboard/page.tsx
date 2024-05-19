@@ -12,8 +12,16 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card'
-const BarChart = dynamic(() => import('react-apexcharts'), { ssr: false })
-const LineData = dynamic(() => import('react-apexcharts'), { ssr: false })
+// const BarChart = dynamic(() => import('react-apexcharts'), { ssr: false })
+// const LineData = dynamic(() => import('react-apexcharts'), { ssr: false })
+const BarChart = dynamic(
+    () => import('@/components/chart').then((mod) => mod.BarChart),
+    { ssr: false }
+)
+const LineData = dynamic(
+    () => import('@/components/chart').then((mod) => mod.LineData),
+    { ssr: false }
+)
 
 export default function AdminDashboard() {
     const [loading, setLoading] = useState(false)

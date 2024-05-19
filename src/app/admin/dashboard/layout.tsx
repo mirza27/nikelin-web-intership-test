@@ -62,7 +62,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         title: 'Session outdated',
                         text: data.message,
                     })
-                    redirect('/login-admin')
+                    router.push('/login-admin')
                 } else {
                     setUser(data.user)
                 }
@@ -76,7 +76,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             .json()
                             .then((data) => data.message),
                     })
-                    redirect('/login-admin')
+                    router.push('/login-admin')
                 }
             }
         } catch (error) {
