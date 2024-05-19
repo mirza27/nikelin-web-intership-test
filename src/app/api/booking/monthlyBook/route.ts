@@ -9,7 +9,8 @@ export async function GET(req: NextRequest, res: NextResponse) {
             _count: {
                 id: true,
             },
-        })
+
+        });
 
         // satukan jika bulan sama
         const result = bookings.reduce(
@@ -26,7 +27,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
         const data = Object.keys(result).map((date) => ({
             date: date,
             count: result[date],
-        }))
+        })).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
         return NextResponse.json(
             {
