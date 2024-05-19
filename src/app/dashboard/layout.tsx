@@ -87,6 +87,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 title: 'Terjadi kesalahan',
                 text: 'Terjadi kesalahan saat memproses permintaan Anda.',
             })
+            router.push('/login')
         }
     }
 

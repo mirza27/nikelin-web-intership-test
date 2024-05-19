@@ -13,7 +13,6 @@ export async function GET(request: NextRequest, response: NextResponse) {
 
 
     if (!session) {
-        redirect('/login')
         return NextResponse.json({
             success: false,
             message: "You haven't logged in",

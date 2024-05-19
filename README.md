@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# User Accounts Documentation
 
-## Getting Started
+## Admin Account
 
-First, run the development server:
+| Email            | Password  |
+| ---------------- | --------- |
+| admin1@gmail.com | admin1123 |
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Engineering Department
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Manager
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Name     | Email          | Password | Role    | Department  |
+| -------- | -------------- | -------- | ------- | ----------- |
+| Rudi Har | rudi@gmail.com | rudirudi | MANAGER | Engineering |
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Supervisors
 
-## Learn More
+| Name     | Email           | Password   | Role       | Department  |
+| -------- | --------------- | ---------- | ---------- | ----------- |
+| Dimas Fi | dimas@gmail.com | dimasDimas | SUPERVISOR | Engineering |
+| Mirza    | mirza@gmail.com | mirza      | SUPERVISOR | Engineering |
 
-To learn more about Next.js, take a look at the following resources:
+### Employees
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Name                | Email               | Password  | Role     | Department  |
+| ------------------- | ------------------- | --------- | -------- | ----------- |
+| Engineer employee 1 | employee1@gmail.com | employee1 | EMPLOYEE | Engineering |
+| Engineer employee 2 | employee2@gmail.com | employee2 | EMPLOYEE | Engineering |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Marketing Department
 
-## Deploy on Vercel
+### Manager
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Name | Email          | Password | Role    | Department |
+| ---- | -------------- | -------- | ------- | ---------- |
+| bayu | bayu@gmail.com | bayu123  | MANAGER | Marketing  |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Supervisor
+
+| Name | Email          | Password | Role       | Department |
+| ---- | -------------- | -------- | ---------- | ---------- |
+| Rafa | rafa@gmail.com | rafa1234 | SUPERVISOR | Marketing  |
+
+### Employees
+
+| Name                | Email               | Password  | Role     | Department |
+| ------------------- | ------------------- | --------- | -------- | ---------- |
+| Engineer employee 3 | employee3@gmail.com | employee3 | EMPLOYEE | Marketing  |
+| Engineer employee 4 | employee4@gmail.com | employee4 | EMPLOYEE | Marketing  |
+
+## User privilages
+
+### 1. Admin
+
+-   mengajukan pemesanan / reservasi peminjaman kendaraan
+-   generate laporan tahunan logbook excel
+-   melihat setiap aktivitas akun
+-   melihat grafik, daftar kendaraan, booking
+-   input data bbm, service kendaaraan (API's only, not implement in web yet)
+
+### 2. user as manager
+
+-   reject / approve pengajuan level 2 setelah pengajuan level 1 diterima
+-   melihat grafik, daftar kendaraan, booking
+-   input data bbm, service kendaaraan (API's only, not implement in web yet)
+
+### 3. user as supervisor
+
+-   reject / approve pengajuan level 1
+-   melihat grafik, daftar kendaraan, booking
+-   input data bbm, service kendaaraan (API's only, not implement in web yet)
+
+### 4. user as employee
+
+-   melihat grafik, daftar kendaraan, booking
+-   input data bbm, service kendaaraan (API's only, not implement in web yet)
