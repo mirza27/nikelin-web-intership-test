@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
+import dynamic from 'next/dynamic'
 import * as XLSX from 'xlsx'
-import { BarChart, LineData } from '@/components/chart'
+// import { BarChart, LineData } from '@/components/chart'
 import {
     Card,
     CardContent,
@@ -11,6 +12,8 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card'
+const BarChart = dynamic(() => import('react-apexcharts'), { ssr: false })
+const LineData = dynamic(() => import('react-apexcharts'), { ssr: false })
 
 export default function AdminDashboard() {
     const [loading, setLoading] = useState(false)
