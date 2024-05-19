@@ -1,10 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../prisma";
 
 // get all vehicle 
 export async function GET(request: Request) {
-
-
     try {
         const vehicles = await prisma.vehicle.findMany({
             include: {
@@ -37,5 +35,45 @@ export async function GET(request: Request) {
             {
                 status: 500,
             });
+    }
+}
+
+export async function POST(request: NextRequest) {
+    try {
+        const body = await request.json();
+
+        const newVehicle = await prisma.vehicle.create({
+            data: {
+                type: body.type,
+                model: body.model,
+                licensePlate: body.licensePlate,
+                ownedBy: body.ownedBy,
+                fuelConsumption: body.fuelConsumption,
+                lastServiceDate: body.lastServiceDate,
+            },
+        });
+
+        return NextResponse.json(
+            {
+                success: true,
+                message: "Vehicle successfully added",
+                data: newVehicle,
+            },
+            {
+                status: 201, // Created
+            }
+        );
+    } catch (error) {
+        console.error("Error inserting new vehicle:", error);
+        return NextResponse.json(
+            {
+                success: false,
+                message: "Failed to add vehicle",
+                error: error
+            },
+            {
+                status: 500, // Internal Server Error
+            }
+        );
     }
 }
