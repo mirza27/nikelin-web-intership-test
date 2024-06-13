@@ -34,7 +34,7 @@
 
 | Name | Email          | Password | Role    | Department |
 | ---- | -------------- | -------- | ------- | ---------- |
-| bayu | bayu@gmail.com | bayu123  | MANAGER | Marketing  |
+| bayu | bayu@gmail.com | bayu  | MANAGER | Marketing  |
 
 ### Supervisor
 
