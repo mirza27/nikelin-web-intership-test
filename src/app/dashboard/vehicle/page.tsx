@@ -140,7 +140,7 @@ export default function VehiclePage() {
                                                 </td>
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                     <>
-                                                        {inUse[vehicle.id] ===
+                                                        {inUse[vehicle.id] ==
                                                         null ? (
                                                             <dd className="mt-1 text-sm text-gray-600">
                                                                 Checking...
