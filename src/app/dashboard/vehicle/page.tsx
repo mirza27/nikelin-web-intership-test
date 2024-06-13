@@ -139,24 +139,20 @@ export default function VehiclePage() {
                                                     {vehicle.ownedBy}
                                                 </td>
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                    <>
-                                                        {inUse[vehicle.id] ==
-                                                        null ? (
-                                                            <dd className="mt-1 text-sm text-gray-600">
-                                                                Checking...
-                                                            </dd>
-                                                        ) : inUse[
-                                                              vehicle.id
-                                                          ] ? (
-                                                            <dd className="mt-1 text-sm text-yellow-600">
-                                                                In Use
-                                                            </dd>
-                                                        ) : (
-                                                            <dd className="mt-1 text-sm text-green-600">
-                                                                Available
-                                                            </dd>
-                                                        )}
-                                                    </>
+                                                    {inUse[vehicle.id] ===
+                                                    null ? (
+                                                        <dd className="mt-1 text-sm text-gray-600">
+                                                            Checking...
+                                                        </dd>
+                                                    ) : inUse[vehicle.id] ? (
+                                                        <dd className="mt-1 text-sm text-yellow-600">
+                                                            In Use
+                                                        </dd>
+                                                    ) : (
+                                                        <dd className="mt-1 text-sm text-green-600">
+                                                            Available
+                                                        </dd>
+                                                    )}
                                                 </td>
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                     {formatDate(

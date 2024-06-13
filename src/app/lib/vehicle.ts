@@ -18,5 +18,5 @@ export async function isVehicleInUse(vehicleId: number): Promise<boolean> {
     })
 
 
-    return activeBookings ? true : false;
+    return activeBookings !== null;
 }
